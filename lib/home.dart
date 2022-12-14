@@ -15,9 +15,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int speed = 300;
-  final player = AudioPlayer()
-    ..setReleaseMode(ReleaseMode.loop);
+  int speed = 650;
+  final player = AudioPlayer()..setReleaseMode(ReleaseMode.loop);
   String localFile = 'audios/last_christmas.mp3';
   AssetSource url = AssetSource('audios/last_christmas.mp3');
 
@@ -41,9 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         height: size.height,
@@ -90,8 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              MyGame(
+                          builder: (context) => MyGame(
                                 speed: speed,
                               )));
                 },
@@ -124,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 alignment: Alignment.topLeft,
                 padding:
-                const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+                    const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
                 height: 80,
                 width: size.width,
                 child: const Text(
