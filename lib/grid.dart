@@ -21,6 +21,7 @@ class MyGrid extends StatelessWidget {
       {this.newPiece, this.landedPieces, this.newColor, this.numberOfSquares});
 
   int count = 0;
+
   void countLanded() {
     count = landedPieces / 4;
     print(count);
@@ -31,7 +32,7 @@ class MyGrid extends StatelessWidget {
     return GridView.builder(
         itemCount: numberOfSquares,
         gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 10),
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 10),
         itemBuilder: (BuildContext context, int index) {
           for (int i = 0; i < pieceColor.length; i++) {
             if (landedPieces[i].contains(index)) {
@@ -39,6 +40,9 @@ class MyGrid extends StatelessWidget {
                 color: pieceColor[i],
               );
             }
+            // if(landedPieces[i].contains(-5)){
+            //   _renderDialogGameOver(context);
+            // }
           }
           if (newPiece.contains(index)) {
             return MyPixel(
@@ -51,4 +55,6 @@ class MyGrid extends StatelessWidget {
           }
         });
   }
+
+
 }

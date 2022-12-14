@@ -1,15 +1,22 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'button.dart';
+import 'constant.dart';
 import 'grid.dart';
 import 'package:flutter/services.dart';
 
 class MyGame extends StatefulWidget {
+  final int speed;
+
+  const MyGame({super.key, required this.speed});
+
   @override
   _MyGameState createState() => _MyGameState();
 }
 
 class _MyGameState extends State<MyGame> {
+  bool isGameOver = false;
+  int totalPoint = 0;
   static List<List<int>> pieces = [
     [4, 5, 14, 15],
     [4, 14, 24, 25],
@@ -42,19 +49,46 @@ class _MyGameState extends State<MyGame> {
     [], // pink
   ];
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    chosenPiece = [];
+    landed = [];
+    landedPosColor = [
+      [], // red
+      [], // yellow
+      [], // purple
+      [], // green
+      [], // blue
+      [], // brown
+      [], // pink
+    ];
+  }
+
   static int numberOfSquares = 150;
   static int number = 0;
   double count = 0;
 
   void countLanded() {
     count = landed.length / 4;
-    print(count);
+    print("count: ${count} + totalPoint:${totalPoint}");
   }
 
   void startGame() {
     resetPieces();
     choosePiece();
-    const duration = const Duration(milliseconds: 300);
+    for (int i = 0; i < pieces.length; i++) {
+      totalPoint += landedPosColor[i]
+          .fold(0, (previousValue, element) => previousValue + element);
+      if (landedPosColor[i].contains(4)) {
+        _renderDialogGameOver(context);
+        setState(() {
+          isGameOver = true;
+        });
+      }
+    }
+    var duration = Duration(milliseconds: widget.speed);
     Timer.periodic(
       duration,
       (Timer timer) {
@@ -67,7 +101,10 @@ class _MyGameState extends State<MyGame> {
             landedPosColor[number % pieces.length].add(chosenPiece[i]);
           }
           number++;
-          startGame();
+          if (!isGameOver) {
+            startGame();
+          }
+
           timer.cancel();
         } else {
           moveDown();
@@ -669,7 +706,7 @@ class _MyGameState extends State<MyGame> {
   5 ->    x
           x x
           x
-  
+
   6 ->  x x x
           x
 
@@ -680,7 +717,7 @@ class _MyGameState extends State<MyGame> {
   8 ->  x x
           x
           x
-  
+
   9 ->      x
         x x x
 
@@ -709,79 +746,173 @@ class _MyGameState extends State<MyGame> {
           x x
           x
 
-  17 ->   
+  17 ->
           x x
             x x
 
   */
+  _renderDialogGameOver(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        backgroundColor: backgroundColor,
+        title: const Text(
+          'Opps!!! You loses.',
+          style: TextStyle(
+            color: Colors.white54,
+            fontSize: 20,
+          ),
+        ),
+        content: Text(
+          'Total point : ${totalPoint}',
+          style: const TextStyle(
+            color: Colors.white54,
+            fontSize: 16,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.amberAccent,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => onPressPlayAgain(),
+            child: const Text(
+              'Play Again',
+              style: TextStyle(
+                color: Colors.amberAccent,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 400,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-                child: MyGrid(
-              numberOfSquares: numberOfSquares,
-              landedPieces: landedPosColor,
-              newPiece: chosenPiece,
-              newColor: pieceColor[number % pieces.length],
-            )),
-            Container(
-              height: 100,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                      child: GestureDetector(
-                    onTap: startGame,
-                    child: MyButton(
-                      child: Text(
-                        "PLAY",
-                        style: TextStyle(color: Colors.white, fontSize: 25),
-                      ),
+    return Scaffold(
+        backgroundColor: backgroundColor,
+        // appBar: AppBar(
+        //   leading: IconButton(
+        //     icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+        //     onPressed: () {
+        //       Navigator.of(context).pop();
+        //     },
+        //   ),
+        // ),
+        body: Center(
+          child: Container(
+            width: 400,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                    child: MyGrid(
+                  numberOfSquares: numberOfSquares,
+                  landedPieces: landedPosColor,
+                  newPiece: chosenPiece,
+                  newColor: pieceColor[number % pieces.length],
+                )),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Row(
+                      children: const [
+                        SizedBox(width: 10),
+                        Icon(Icons.arrow_back_ios,
+                            color: Colors.white, size: 16),
+                        Text("Back",
+                            style: TextStyle(color: Colors.white, fontSize: 16))
+                      ],
                     ),
-                  )),
-                  Expanded(
-                      child: GestureDetector(
-                    onTap: moveLeft,
-                    child: MyButton(
-                      child: Icon(
-                        Icons.arrow_left,
-                        color: Colors.white,
-                        size: 50,
-                      ),
-                    ),
-                  )),
-                  Expanded(
-                      child: GestureDetector(
-                    onTap: moveRight,
-                    child: MyButton(
-                      child: Icon(
-                        Icons.arrow_right,
-                        color: Colors.white,
-                        size: 50,
-                      ),
-                    ),
-                  )),
-                  Expanded(
-                      child: GestureDetector(
-                    onTap: rotatePiece,
-                    child: MyButton(
-                      child: Icon(
-                        Icons.rotate_right,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  )),
-                ],
-              ),
+                  ),
+                ),
+                SizedBox(
+                  height: 100,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                          child: GestureDetector(
+                        onTap: startGame,
+                        child: MyButton(
+                          child: const Text(
+                            "PLAY",
+                            style: TextStyle(color: Colors.white, fontSize: 25),
+                          ),
+                        ),
+                      )),
+                      Expanded(
+                          child: GestureDetector(
+                        onTap: moveLeft,
+                        child: MyButton(
+                          child: const Icon(
+                            Icons.arrow_left,
+                            color: Colors.white,
+                            size: 50,
+                          ),
+                        ),
+                      )),
+                      Expanded(
+                          child: GestureDetector(
+                        onTap: moveRight,
+                        child: MyButton(
+                          child: const Icon(
+                            Icons.arrow_right,
+                            color: Colors.white,
+                            size: 50,
+                          ),
+                        ),
+                      )),
+                      Expanded(
+                          child: GestureDetector(
+                        onTap: rotatePiece,
+                        child: MyButton(
+                          child: const Icon(
+                            Icons.rotate_right,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      )),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
+  }
+
+  onPressPlayAgain() {
+    Navigator.of(context).pop();
+    setState(() {
+      chosenPiece = [];
+      landed = [];
+      landedPosColor = [
+        [], // red
+        [], // yellow
+        [], // purple
+        [], // green
+        [], // blue
+        [], // brown
+        [], // pink
+      ];
+    });
+    setState(() {
+      isGameOver = false;
+    });
+    startGame();
   }
 }

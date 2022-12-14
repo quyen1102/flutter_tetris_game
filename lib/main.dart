@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'game.dart';
+import 'home.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,8 +28,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       //appBar: AppBar(),
-      backgroundColor: Colors.grey[900],
-      body: MyGame(),
+      body: const HomeScreen(),
     );
   }
 }
