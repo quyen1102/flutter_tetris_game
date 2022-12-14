@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_game_tetris_1102/game.dart';
 import 'package:flutter_game_tetris_1102/main.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'constant.dart';
 
@@ -15,7 +16,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int speed = 300;
-  final player = AudioPlayer()..setReleaseMode(ReleaseMode.loop);
+  final player = AudioPlayer()
+    ..setReleaseMode(ReleaseMode.loop);
   String localFile = 'audios/last_christmas.mp3';
   AssetSource url = AssetSource('audios/last_christmas.mp3');
 
@@ -39,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
       body: Container(
         height: size.height,
@@ -86,7 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MyGame(
+                          builder: (context) =>
+                              MyGame(
                                 speed: speed,
                               )));
                 },
@@ -119,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 alignment: Alignment.topLeft,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+                const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
                 height: 80,
                 width: size.width,
                 child: const Text(
@@ -147,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           speed = 300;
                         });
-                        // toast("Selected hard mode");
+                        toast("Selected hard mode");
                       },
                       child: const Text('Hard'),
                     ),
@@ -162,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           speed = 650;
                         });
-                        // toast("Selected normal mode");
+                        toast("Selected normal mode");
                       },
                       child: const Text('Normal'),
                     ),
@@ -177,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           speed = 1000;
                         });
-                        // toast("Selected slowly mode");
+                        toast("Selected slowly mode");
                       },
                       child: const Text('Slowly'),
                     ),
@@ -189,5 +194,16 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  toast(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.amber,
+        textColor: Colors.deepPurple,
+        fontSize: 16.0);
   }
 }
